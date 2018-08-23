@@ -24,7 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp \
-    adiantum.cpp
+    adiantum.cpp \
+    element.cpp
 
 HEADERS  += \
-    adiantum.h
+    adiantum.h \
+    element.h

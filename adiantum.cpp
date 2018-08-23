@@ -1,4 +1,5 @@
 #include "adiantum.h"
+#include "element.h"
 #include "windows.h"
 
 Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
@@ -8,6 +9,10 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
         throw("Can’t register hotkey");
     }
     this->showFullScreen();
+    Element *element = new Element("test", 64, 64);
+    element->setParent(this);
+    element->move(200,200);
+    element->show();
 }
 
 bool Adiantum::nativeEvent(const QByteArray &eventType, void *message, long *result) {
