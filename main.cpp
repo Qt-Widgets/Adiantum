@@ -3,8 +3,11 @@
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    Adiantum adiantum;
-    adiantum.show();
-
-    return app.exec();
+    try {
+        Adiantum adiantum;
+        adiantum.show();
+        return app.exec();
+    } catch(...) {
+        return 0;
+    }
 }
