@@ -22,6 +22,12 @@ void Element::mousePressEvent(QMouseEvent *event) {
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::RightButton) {
-        this->move(mapToParent(event->pos() - offset));
+        this->move(mapToParent(floorToGrid(event->pos() - offset).toPoint()));
     }
+}
+
+QPointF Element::floorToGrid(const QPointF& pointP) {
+    qreal xV = floor(pointP.x()/GRID_SIZE)*GRID_SIZE;
+    qreal yV = floor(pointP.y()/GRID_SIZE)*GRID_SIZE;
+    return QPointF(xV, yV);
 }

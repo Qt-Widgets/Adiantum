@@ -8,6 +8,8 @@ class Element : public QLabel {
 
 public:
     Element(QString name, int width, int height);
+    static const int GRID_SIZE = 16;
+    QPointF floorToGrid(const QPointF& pointP);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
