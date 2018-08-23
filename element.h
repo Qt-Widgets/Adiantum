@@ -8,6 +8,11 @@ class Element : public QLabel {
 
 public:
     Element(QString name, int width, int height);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
+private:
+    QPoint offset;
 };
 
 #endif // ELEMENT_H
