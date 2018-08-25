@@ -13,6 +13,9 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
+protected:
+    QHBoxLayout *content_layout;
+
 private:
     QPoint offset;
 };

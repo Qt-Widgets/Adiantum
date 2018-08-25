@@ -12,11 +12,16 @@ Element::Element(QString name, int width, int height) {
         #"+name+":hover {\
             background: rgba(255,255,255,0.2);\
         }");
+    this->content_layout = new QHBoxLayout(this);
+    this->content_layout->setMargin(0);
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::RightButton) {
         offset = event->pos();
+    }
+    if(event->buttons() & Qt::LeftButton) {
+        QApplication::quit();
     }
 }
 
