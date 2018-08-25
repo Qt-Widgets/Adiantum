@@ -10,6 +10,9 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     }
     this->showFullScreen();
     Element *element = new Element("test", 64, 64);
+    element->onLeftClickFunction = [](){
+        QApplication::quit();
+    };
     element->setParent(this);
     element->move(200,200);
     element->show();

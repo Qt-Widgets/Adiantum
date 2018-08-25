@@ -3,6 +3,8 @@
 
 #include <QtWidgets>
 
+typedef std::function<void()> Callable;
+
 class Element : public QLabel {
     Q_OBJECT
 
@@ -12,6 +14,7 @@ public:
     QPointF floorToGrid(const QPointF& pointP);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    Callable onLeftClickFunction;
 
 protected:
     QHBoxLayout *content_layout;

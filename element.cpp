@@ -21,7 +21,7 @@ void Element::mousePressEvent(QMouseEvent *event) {
         offset = event->pos();
     }
     if(event->buttons() & Qt::LeftButton) {
-        QApplication::quit();
+        onLeftClickFunction();
     }
 }
 
