@@ -30,3 +30,6 @@ SOURCES += main.cpp \
 HEADERS  += \
     adiantum.h \
     element.h
+
+RESOURCES += \
+    resources.qrc

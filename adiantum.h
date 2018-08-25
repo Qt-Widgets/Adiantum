@@ -2,6 +2,7 @@
 #define ADIANTUM_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 
 namespace Ui {
 class Adiantum;
@@ -15,8 +16,14 @@ public:
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
     ~Adiantum();
 
+public slots:
+   void openAboutWindow();
+   void closeApp();
+
 private:
     bool active = true;
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
 };
 
 #endif // ADIANTUM_H
