@@ -4,8 +4,8 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     try {
-        Adiantum adiantum;
-        adiantum.show();
+        Adiantum *adiantum = Adiantum::getInstance();
+        adiantum->show();
         app.setQuitOnLastWindowClosed(false);
         return app.exec();
     } catch(...) {

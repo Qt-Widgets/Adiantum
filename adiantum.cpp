@@ -2,6 +2,15 @@
 #include "element.h"
 #include "windows.h"
 
+Adiantum* Adiantum::instance = NULL;
+
+Adiantum* Adiantum::getInstance() {
+    if (Adiantum::instance == NULL) {
+        Adiantum::instance = new Adiantum(0);
+    }
+    return Adiantum::instance;
+}
+
 Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->setObjectName("adiantum");
     this->setStyleSheet("#adiantum {background:black;}");
@@ -30,7 +39,7 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->showFullScreen();
     Element *element = new Element("test", 64, 64);
     element->onLeftClickFunction = [](){
-        QApplication::quit();
+        Adiantum::getInstance()->executeCommand("cmd.exe");
     };
     element->setParent(this);
     element->move(200,200);
@@ -45,17 +54,25 @@ void Adiantum::closeApp() {
     QApplication::quit();
 }
 
+void Adiantum::executeCommand(QString command) {
+    ShellExecute(0, 0, reinterpret_cast<const WCHAR*>(command.utf16()), 0, 0, SW_NORMAL);
+    this->switchWindow();
+}
+
+void Adiantum::switchWindow() {
+    if (this->isVisible()) {
+        this->hide();
+    } else {
+        this->show();
+    }
+}
+
 bool Adiantum::nativeEvent(const QByteArray &eventType, void *message, long *result) {
     Q_UNUSED(eventType);
     Q_UNUSED(result);
     MSG *msg = static_cast<MSG*>(message);
     if(msg->message == WM_HOTKEY) {
-        this->active = !this->active;
-        if (this->active) {
-            this->show();
-        } else {
-            this->hide();
-        }
+        this->switchWindow();
         return true;
     }
     return false;
