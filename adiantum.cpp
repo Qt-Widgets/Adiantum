@@ -1,5 +1,6 @@
 #include "adiantum.h"
 #include "element.h"
+#include "webloader.h"
 #include "windows.h"
 
 Adiantum* Adiantum::instance = NULL;
@@ -20,6 +21,9 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
         throw("Can’t register hotkey");
     }
 
+    networkManager = new QNetworkAccessManager();
+    QSslConfiguration::defaultConfiguration();
+
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setToolTip("Adiantum");
 
@@ -37,6 +41,7 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     trayIcon->show();
 
     this->showFullScreen();
+
     Element *element = new Element("test", 64, 64);
     element->onLeftClickFunction = [](){
         Adiantum::getInstance()->executeCommand("cmd.exe");
@@ -45,6 +50,22 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     element->setParent(this);
     element->move(200,200);
     element->show();
+
+    Webloader *webloader = new Webloader("test", "https://jsonplaceholder.typicode.com/todos/1", 64, 64);
+    webloader->setParent(this);
+    webloader->move(264,200);
+    webloader->update();
+    webloader->show();
+
+    Webloader *webloader2 = new Webloader("test2", "http://invalidurl", 64, 64);
+    webloader2->setParent(this);
+    webloader2->move(328,200);
+    webloader2->update();
+    webloader2->show();
+}
+
+QNetworkAccessManager* Adiantum::getNAM() {
+    return networkManager;
 }
 
 void Adiantum::openAboutWindow() {
@@ -57,7 +78,7 @@ void Adiantum::closeApp() {
 
 void Adiantum::executeCommand(QString command) {
     ShellExecute(0, 0, reinterpret_cast<const WCHAR*>(command.utf16()), 0, 0, SW_NORMAL);
-    this->switchWindow();
+    switchWindow();
 }
 
 void Adiantum::switchWindow() {

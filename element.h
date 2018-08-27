@@ -18,6 +18,7 @@ public:
 
 protected:
     QHBoxLayout *content_layout;
+    QLabel *content;
 
 private:
     QPoint offset;

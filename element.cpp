@@ -12,8 +12,16 @@ Element::Element(QString name, int width, int height) {
         #"+name+":hover {\
             background: rgba(255,255,255,0.2);\
         }");
-    this->content_layout = new QHBoxLayout(this);
-    this->content_layout->setMargin(0);
+    content_layout = new QHBoxLayout(this);
+    content_layout->setMargin(0);
+    content = new QLabel(this);
+    content->setFixedWidth(width);
+    content->setFixedHeight(height);
+    content->setAttribute(Qt::WA_TranslucentBackground);
+    content->setAttribute(Qt::WA_TransparentForMouseEvents);
+    content->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    content_layout->addWidget(content);
+    onLeftClickFunction = [](){};
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {

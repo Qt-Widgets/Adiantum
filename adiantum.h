@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtWidgets>
+#include <QtNetwork>
 
 namespace Ui {
 class Adiantum;
@@ -17,6 +18,7 @@ public:
     ~Adiantum();
     void switchWindow();
     void executeCommand(QString command);
+    QNetworkAccessManager* getNAM();
 
 public slots:
    void openAboutWindow();
@@ -25,6 +27,7 @@ public slots:
 private:
     explicit Adiantum(QWidget *parent = 0);
     static Adiantum *instance;
+    QNetworkAccessManager *networkManager;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
 };

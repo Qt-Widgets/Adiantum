@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     adiantum.cpp \
-    element.cpp
+    element.cpp \
+    webloader.cpp
 
 HEADERS  += \
     adiantum.h \
-    element.h
+    element.h \
+    webloader.h
 
 RESOURCES += \
     resources.qrc

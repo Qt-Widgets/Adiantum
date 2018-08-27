@@ -3,5 +3,8 @@
         <file>res/images/app_icon.png</file>
         <file>res/images/tray_icon.png</file>
         <file>res/images/cmd.png</file>
+        <file>res/images/refresh.png</file>
+        <file>res/images/loader.gif</file>
+        <file>res/images/disconnect.png</file>
     </qresource>
 </RCC>
