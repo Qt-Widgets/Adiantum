@@ -41,6 +41,7 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     element->onLeftClickFunction = [](){
         Adiantum::getInstance()->executeCommand("cmd.exe");
     };
+    element->setPixmap(QPixmap(":/res/images/cmd.png"));
     element->setParent(this);
     element->move(200,200);
     element->show();
