@@ -9,8 +9,13 @@
 class Webloader : public Element {
     Q_OBJECT
 
+struct OnLoadCallback {
+    void (*func)(Webloader*, QString);
+};
+
 public:
     Webloader(QString name, QString url, int width, int height);
+    OnLoadCallback onLoad;
 
 protected:
     void load();

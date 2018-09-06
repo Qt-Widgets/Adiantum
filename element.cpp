@@ -21,7 +21,7 @@ Element::Element(QString name, int width, int height) {
     content->setAttribute(Qt::WA_TransparentForMouseEvents);
     content->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     content_layout->addWidget(content);
-    onLeftClickFunction = [](){};
+    onLeftClick.func = [](){};
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
@@ -29,7 +29,7 @@ void Element::mousePressEvent(QMouseEvent *event) {
         offset = event->pos();
     }
     if(event->buttons() & Qt::LeftButton) {
-        onLeftClickFunction();
+        onLeftClick.func();
     }
 }
 

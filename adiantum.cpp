@@ -43,7 +43,7 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->showFullScreen();
 
     Element *element = new Element("test", 64, 64);
-    element->onLeftClickFunction = [](){
+    element->onLeftClick.func = [](){
         Adiantum::getInstance()->executeCommand("cmd.exe");
     };
     element->setPixmap(QPixmap(":/res/images/cmd.png"));
@@ -56,6 +56,7 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     webloader->move(264,200);
     webloader->update();
     webloader->show();
+    webloader->onLoad.func = [](Webloader* webloader, QString s) { webloader->content->setText(s); };
 
     Webloader *webloader2 = new Webloader("test2", "http://invalidurl", 64, 64);
     webloader2->setParent(this);

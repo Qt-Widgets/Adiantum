@@ -3,7 +3,9 @@
 
 #include <QtWidgets>
 
-typedef std::function<void()> Callable;
+struct OnClickCallback {
+    void (*func)();
+};
 
 class Element : public QLabel {
     Q_OBJECT
@@ -14,11 +16,11 @@ public:
     QPointF floorToGrid(const QPointF& pointP);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    Callable onLeftClickFunction;
+    OnClickCallback onLeftClick;
+    QLabel *content;
 
 protected:
     QHBoxLayout *content_layout;
-    QLabel *content;
 
 private:
     QPoint offset;
