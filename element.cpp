@@ -20,6 +20,7 @@ Element::Element(QString name, int width, int height) {
     content->setAttribute(Qt::WA_TranslucentBackground);
     content->setAttribute(Qt::WA_TransparentForMouseEvents);
     content->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    content->setTextFormat(Qt::RichText);
     content_layout->addWidget(content);
     onLeftClick.func = [](){};
 }

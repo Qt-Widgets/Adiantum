@@ -3,6 +3,8 @@
 #include "webloader.h"
 #include "windows.h"
 
+#include <QJsonDocument>
+
 Adiantum* Adiantum::instance = NULL;
 
 Adiantum* Adiantum::getInstance() {
@@ -51,18 +53,29 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     element->move(200,200);
     element->show();
 
-    Webloader *webloader = new Webloader("test", "https://jsonplaceholder.typicode.com/todos/1", 64, 64);
-    webloader->setParent(this);
-    webloader->move(264,200);
-    webloader->update();
-    webloader->show();
-    webloader->onLoad.func = [](Webloader* webloader, QString s) { webloader->content->setText(s); };
-
-    Webloader *webloader2 = new Webloader("test2", "http://invalidurl", 64, 64);
-    webloader2->setParent(this);
-    webloader2->move(328,200);
-    webloader2->update();
-    webloader2->show();
+    Webloader *weather = new Webloader("test", "https://www.metaweather.com/api/location/2122265/", 192, 64);
+    weather->setParent(this);
+    weather->move(264,200);
+    weather->update();
+    weather->show();
+    weather->onLoad.func = [](Webloader* weather, QString s) {
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(s.toUtf8());
+        QJsonObject jsonObject = jsonResponse.object();
+        QJsonArray jsonArray = jsonObject["consolidated_weather"].toArray();
+        QJsonObject today = jsonArray.at(0).toObject();
+        weather->content->setText(
+                    "<style>\
+                    .icon {padding-left:4px;}\
+                    .first {color: white;vertical-align:middle;}\
+                    .second {color: white;padding-right:4px;vertical-align:middle;}\
+                    .city {font-weight:bold;font-size: 14px;}\
+                    .state {font-size: 10px;}\
+                    .temp {font-size: 24px;}\
+                    </style>\
+                    <table width='100%'><tr><td align='left' width='48px' class='icon'><img src=':/res/images/weather/"+today["weather_state_abbr"].toString()+".png'></td>\
+                    <td class='first'><span class='city'>"+jsonObject["title"].toString()+"</span><br><span class='state'>"+today["weather_state_name"].toString()+"</span></td>\
+                    <td align='right' class='second'><span class='temp'>"+QString::number(floor(today["the_temp"].toDouble()))+"\u00B0</span></td></tr></table>");
+    };
 }
 
 QNetworkAccessManager* Adiantum::getNAM() {
