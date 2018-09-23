@@ -17,6 +17,7 @@ public:
     QLabel *content;
     sol::state state;
     sol::protected_function safe_onleftclick;
+    std::string readFile(QString path);
 
 protected:
     QHBoxLayout *content_layout;

@@ -12,3 +12,6 @@ Resources:
 Dependency management:
 * Unpack Lua binaries from http://luabinaries.sourceforge.net/download.html to lib/lua directory
 * Copy single-header library sol.hpp from https://github.com/ThePhD/sol2/tree/develop/single/sol to lib/sol directory
+
+Lua libraries:
+* json.lua - A lightweight JSON library for Lua by rxi: https://github.com/rxi/json.lua

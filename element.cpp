@@ -31,17 +31,9 @@ Element::Element(QString name, int width, int height) {
     content->setTextFormat(Qt::RichText);
     content_layout->addWidget(content);
 
-    QString data;
-    QString fileName(":/res/scripts/script.lua");
-
-    QFile file(fileName);
-    if(file.open(QIODevice::ReadOnly)) {
-        data = file.readAll();
-    }
-    file.close();
-
-    state.open_libraries(sol::lib::os, sol::lib::base);
-    state.script(data.toStdString());
+    state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
+    state.require_script("json", readFile(":/res/scripts/json.lua"));
+    state.script(readFile(":/res/scripts/script.lua"));
 
     safe_onleftclick = state["onLeftClick"];
 }
@@ -53,6 +45,16 @@ void Element::mousePressEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
         safe_onleftclick();
     }
+}
+
+std::string Element::readFile(QString path) {
+    QString data;
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly)) {
+        data = file.readAll();
+    }
+    file.close();
+    return data.toStdString();
 }
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
