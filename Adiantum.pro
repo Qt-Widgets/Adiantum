@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network
+CONFIG   += c++14
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +23,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
 SOURCES += main.cpp \
     adiantum.cpp \
     element.cpp \
@@ -31,7 +31,18 @@ SOURCES += main.cpp \
 HEADERS  += \
     adiantum.h \
     element.h \
-    webloader.h
+    webloader.h \
+    ./lib/lua/include/lua.h \
+    ./lib/lua/include/lauxlib.h \
+    ./lib/lua/include/lualib.h \
+    ./lib/sol/sol.hpp
 
 RESOURCES += \
     resources.qrc
+
+LIBS += -L$$PWD/lib/lua/ -llua53 \
+
+INCLUDEPATH += $$PWD/lib/lua/include \
+               $$PWD/lib/sol
+DEPENDPATH += $$PWD/lib/lua/include \
+              $$PWD/lib/sol

@@ -1,5 +1,13 @@
 #include "element.h"
 
+extern "C" {
+    #include "./lib/lua/include/lua.h"
+    #include "./lib/lua/include/lauxlib.h"
+    #include "./lib/lua/include/lualib.h"
+}
+
+#include <sol.hpp>
+
 Element::Element(QString name, int width, int height) {
     this->setObjectName(name);
     this->setFixedWidth(width);
@@ -22,7 +30,20 @@ Element::Element(QString name, int width, int height) {
     content->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     content->setTextFormat(Qt::RichText);
     content_layout->addWidget(content);
-    onLeftClick.func = [](){};
+
+    QString data;
+    QString fileName(":/res/scripts/script.lua");
+
+    QFile file(fileName);
+    if(file.open(QIODevice::ReadOnly)) {
+        data = file.readAll();
+    }
+    file.close();
+
+    state.open_libraries(sol::lib::os, sol::lib::base);
+    state.script(data.toStdString());
+
+    safe_onleftclick = state["onLeftClick"];
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
@@ -30,7 +51,7 @@ void Element::mousePressEvent(QMouseEvent *event) {
         offset = event->pos();
     }
     if(event->buttons() & Qt::LeftButton) {
-        onLeftClick.func();
+        safe_onleftclick();
     }
 }
 

@@ -3,8 +3,6 @@
 #include "webloader.h"
 #include "windows.h"
 
-#include <QJsonDocument>
-
 Adiantum* Adiantum::instance = NULL;
 
 Adiantum* Adiantum::getInstance() {
@@ -45,9 +43,6 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->showFullScreen();
 
     Element *element = new Element("test", 64, 64);
-    element->onLeftClick.func = [](){
-        Adiantum::getInstance()->executeCommand("cmd.exe");
-    };
     element->setPixmap(QPixmap(":/res/images/cmd.png"));
     element->setParent(this);
     element->move(200,200);
@@ -58,24 +53,6 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     weather->move(264,200);
     weather->update();
     weather->show();
-    weather->onLoad.func = [](Webloader* weather, QString s) {
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(s.toUtf8());
-        QJsonObject jsonObject = jsonResponse.object();
-        QJsonArray jsonArray = jsonObject["consolidated_weather"].toArray();
-        QJsonObject today = jsonArray.at(0).toObject();
-        weather->content->setText(
-                    "<style>\
-                    .icon {padding-left:4px;}\
-                    .first {color: white;vertical-align:middle;}\
-                    .second {color: white;padding-right:4px;vertical-align:middle;}\
-                    .city {font-weight:bold;font-size: 14px;}\
-                    .state {font-size: 10px;}\
-                    .temp {font-size: 24px;}\
-                    </style>\
-                    <table width='100%'><tr><td align='left' width='48px' class='icon'><img src=':/res/images/weather/"+today["weather_state_abbr"].toString()+".png'></td>\
-                    <td class='first'><span class='city'>"+jsonObject["title"].toString()+"</span><br><span class='state'>"+today["weather_state_name"].toString()+"</span></td>\
-                    <td align='right' class='second'><span class='temp'>"+QString::number(floor(today["the_temp"].toDouble()))+"\u00B0</span></td></tr></table>");
-    };
 }
 
 QNetworkAccessManager* Adiantum::getNAM() {

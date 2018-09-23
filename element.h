@@ -3,9 +3,7 @@
 
 #include <QtWidgets>
 
-struct OnClickCallback {
-    void (*func)();
-};
+#include <sol.hpp>
 
 class Element : public QLabel {
     Q_OBJECT
@@ -16,8 +14,9 @@ public:
     QPointF floorToGrid(const QPointF& pointP);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    OnClickCallback onLeftClick;
     QLabel *content;
+    sol::state state;
+    sol::protected_function safe_onleftclick;
 
 protected:
     QHBoxLayout *content_layout;

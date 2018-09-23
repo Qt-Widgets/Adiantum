@@ -1,2 +1,6 @@
 Adiantum.pro.user
 build/
+lib/lua/*
+!lib/lua/.gitkeep
+lib/sol/*
+!lib/sol/.gitkeep

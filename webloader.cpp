@@ -27,7 +27,7 @@ Webloader::Webloader(QString name, QString url, int width, int height) : Element
                 }");
     refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
     connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
-    onLoad.func = [](Webloader* webloader, QString s){ qDebug() << s; };
+    safe_onrequestdone = state["onRequestDone"];
 }
 
 void Webloader::load() {
@@ -53,7 +53,9 @@ void Webloader::requestDone() {
         content->setText("<html></html>");
         QByteArray bytes = reply->readAll();
         response = QString::fromUtf8(bytes.data(), bytes.size());
-        onLoad.func(this, response);
+        std::string result = safe_onrequestdone(response.toStdString());
+        qDebug() << QString::fromStdString(result);
+        content->setText(QString::fromStdString(result));
     } else {
         content->setText("<html><img src=':/res/images/disconnect.png'></html>");
     }

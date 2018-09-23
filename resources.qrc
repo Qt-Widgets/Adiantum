@@ -16,5 +16,6 @@
         <file>res/images/weather/sl.png</file>
         <file>res/images/weather/sn.png</file>
         <file>res/images/weather/t.png</file>
+        <file>res/scripts/script.lua</file>
     </qresource>
 </RCC>
