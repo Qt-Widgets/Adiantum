@@ -1,7 +1,8 @@
 -- script.lua
 
 function onLeftClick()
-	os.execute('start notepad.exe')
+        os.execute("start notepad.exe")
+	adiantum_switch_window()
 end
 
 function onRequestDone(response)

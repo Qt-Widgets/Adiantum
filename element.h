@@ -5,6 +5,8 @@
 
 #include <sol.hpp>
 
+void ext_switch_window();
+
 class Element : public QLabel {
     Q_OBJECT
 

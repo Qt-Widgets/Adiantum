@@ -1,4 +1,5 @@
 #include "element.h"
+#include "adiantum.h"
 
 extern "C" {
     #include "./lib/lua/include/lua.h"
@@ -7,6 +8,10 @@ extern "C" {
 }
 
 #include <sol.hpp>
+
+void ext_switch_window() {
+    Adiantum::getInstance()->switchWindow();
+}
 
 Element::Element(QString name, int width, int height) {
     this->setObjectName(name);
@@ -32,6 +37,7 @@ Element::Element(QString name, int width, int height) {
     content_layout->addWidget(content);
 
     state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
+    state.set_function("adiantum_switch_window", ext_switch_window);
     state.require_script("json", readFile(":/res/scripts/json.lua"));
     state.script(readFile(":/res/scripts/script.lua"));
 
