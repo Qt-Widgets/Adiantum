@@ -15,6 +15,7 @@ class Adiantum : public QMainWindow {
 public:
     static Adiantum* getInstance();
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
+    void closeEvent(QCloseEvent *e);
     ~Adiantum();
     void switchWindow();
     void executeCommand(QString command);

@@ -80,6 +80,11 @@ void Adiantum::switchWindow() {
     }
 }
 
+void Adiantum::closeEvent(QCloseEvent *e) {
+    trayIcon->hide();
+    e->accept();
+}
+
 bool Adiantum::nativeEvent(const QByteArray &eventType, void *message, long *result) {
     Q_UNUSED(eventType);
     Q_UNUSED(result);
