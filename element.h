@@ -23,6 +23,7 @@ public:
 
 protected:
     QHBoxLayout *content_layout;
+    void renderLuaError();
 
 private:
     QPoint offset;

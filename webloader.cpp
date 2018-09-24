@@ -53,9 +53,14 @@ void Webloader::requestDone() {
         content->setText("<html></html>");
         QByteArray bytes = reply->readAll();
         response = QString::fromUtf8(bytes.data(), bytes.size());
-        std::string result = safe_onrequestdone(response.toStdString());
-        //qDebug() << QString::fromStdString(result);
-        content->setText(QString::fromStdString(result));
+        auto auto_result = safe_onrequestdone(response.toStdString());
+        std::string result = auto_result;
+        if (auto_result.valid()) {
+            content->setText(QString::fromStdString(result));
+        } else {
+            this->renderLuaError();
+            qDebug() << QString::fromStdString(result);
+        }
     } else {
         content->setText("<html><img src=':/res/images/disconnect.png'></html>");
     }

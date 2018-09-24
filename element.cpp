@@ -38,8 +38,24 @@ Element::Element(QString name, int width, int height) {
 
     state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
     state.set_function("adiantum_switch_window", ext_switch_window);
-    state.require_script("json", readFile(":/res/scripts/json.lua"));
-    state.script(readFile(":/res/scripts/script.lua"));
+
+    try {
+        state.safe_script(readFile(":/res/scripts/script.lua"));
+    } catch( const sol::error& e ) {
+        this->renderLuaError();
+        qDebug() << e.what();
+    }
+
+    sol::table modules = state["modules"].get_or(sol::table(state, sol::create));
+    modules.for_each([&](const sol::object& key, const sol::object& value) {
+        std::string module_name = state["tostring"](value);
+        QString module_path(":/res/scripts/"+QString::fromStdString(module_name)+".lua");
+        if (QFile::exists(module_path)) {
+            state.require_script(module_name, readFile(module_path));
+        } else {
+            qDebug() << "Warning: cannot open module " +module_path;
+        }
+    });
 
     safe_onleftclick = state["onLeftClick"];
 }
@@ -61,6 +77,10 @@ std::string Element::readFile(QString path) {
     }
     file.close();
     return data.toStdString();
+}
+
+void Element::renderLuaError() {
+    content->setText("<html><img src=':/res/images/error.png'></html>");
 }
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
