@@ -20,10 +20,10 @@ public:
     void closeEvent(QCloseEvent *e);
     ~Adiantum();
     void switchWindow();
-    void executeCommand(QString command);
-    QMap<QString, Element*> elements;
-    QNetworkAccessManager* getNAM();
+    QString scripts_path;
+    QString networkRequest(QString url);
     void update();
+    void loadElements();
 
 public slots:
    void openAboutWindow();
@@ -35,6 +35,7 @@ private:
     QNetworkAccessManager *networkManager;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
+    QMap<QString, Element*> elements;
 };
 
 #endif // ADIANTUM_H

@@ -11,16 +11,17 @@ class Element : public QLabel {
     Q_OBJECT
 
 public:
-    Element(QWidget *parent, QString name, int width, int height);
-    static const int GRID_SIZE = 16;
-    QPointF floorToGrid(const QPointF& pointP);
+    Element(QWidget *parent, QString name);
+    static const int GRID_SIZE;
+    static const int DEFAULT_ELEMENT_SIZE;
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     QLabel *content;
     sol::state state;
     sol::protected_function safe_onleftclick;
-    std::string readFile(QString path);
-    virtual void update();
+    sol::protected_function safe_onupdate;
+    void update();
+    void updateCompleted(QString result);
 
 protected:
     QHBoxLayout *content_layout;
@@ -28,6 +29,12 @@ protected:
 
 private:
     QPoint offset;
+    QPushButton *refresh;
+    QLabel *loader;
+    bool canBeUpdated;
+
+protected slots:
+    void refreshButtonClick();
 };
 
 #endif // ELEMENT_H

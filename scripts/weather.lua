@@ -1,12 +1,12 @@
--- script.lua
+-- weather.lua
+config = {x=264, y=200, w=192, h=64, url="https://www.metaweather.com/api/location/2122265/"}
 modules = {"json"}
 
 function onLeftClick()
-	os.execute("start notepad.exe")
-	adiantum_switch_window()
 end
 
-function onRequestDone(response)
+function onUpdate()
+	local response = adiantum_network_request(config["url"])
 	local data = json.decode(response)
 	weather = data["consolidated_weather"][1]["weather_state_name"]
 	icon = data["consolidated_weather"][1]["weather_state_abbr"]

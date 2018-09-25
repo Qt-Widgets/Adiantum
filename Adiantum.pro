@@ -26,16 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     adiantum.cpp \
     element.cpp \
-    webloader.cpp
+    external.cpp
 
 HEADERS  += \
     adiantum.h \
     element.h \
-    webloader.h \
+    external.h \
     ./lib/lua/include/lua.h \
     ./lib/lua/include/lauxlib.h \
     ./lib/lua/include/lualib.h \
-    ./lib/sol/sol.hpp
+    ./lib/sol/sol.hpp \
 
 RESOURCES += \
     resources.qrc
@@ -46,3 +46,26 @@ INCLUDEPATH += $$PWD/lib/lua/include \
                $$PWD/lib/sol
 DEPENDPATH += $$PWD/lib/lua/include \
               $$PWD/lib/sol
+
+CONFIG(debug, debug|release) {
+    DESTDIR = $$PWD/build/debug
+} else {
+    DESTDIR = $$PWD/build/release
+}
+
+win32 {
+    COPY_FROM_PATH=$$shell_path($$PWD/scripts)
+    COPY_TO_PATH=$$shell_path($$DESTDIR)
+}
+else {
+    COPY_FROM_PATH=$$PWD/scripts
+    COPY_TO_PATH=$$DESTDIR
+}
+
+copydata.commands = $(COPY_DIR) \"$$COPY_FROM_PATH\" \"$$COPY_TO_PATH\"
+first.depends = $(first) copydata
+
+export(first.depends)
+export(copydata.commands)
+
+QMAKE_EXTRA_TARGETS += first copydata

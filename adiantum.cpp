@@ -1,6 +1,5 @@
 #include "adiantum.h"
 #include "element.h"
-#include "webloader.h"
 #include "windows.h"
 
 Adiantum* Adiantum::instance = NULL;
@@ -20,6 +19,8 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     if(!RegisterHotKey(HWND(winId()), 0, 0, 0x6B)) {
         throw("Can’t register hotkey");
     }
+
+    scripts_path = QDir(QCoreApplication::applicationDirPath()).filePath("scripts");
 
     networkManager = new QNetworkAccessManager();
     QSslConfiguration::defaultConfiguration();
@@ -41,14 +42,14 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     trayIcon->show();
 
     this->showFullScreen();
+}
 
-    elements.insert("test", new Element(this, "test", 64, 64));
-    elements.insert("weather", new Webloader(this, "weather", "https://www.metaweather.com/api/location/2122265/", 192, 64));
-
-    elements["test"]->setPixmap(QPixmap(":/res/images/cmd.png"));
-    elements["test"]->move(200,200);
-
-    elements["weather"]->move(264,200);
+void Adiantum::loadElements() {
+    QStringList files = QDir(scripts_path).entryList(QStringList() << "*.lua", QDir::Files);
+    foreach (QString filename, files) {
+        QString name = filename.split(".",QString::SkipEmptyParts).at(0);
+        elements.insert(name, new Element(this, name));
+    }
 }
 
 void Adiantum::update() {
@@ -59,8 +60,21 @@ void Adiantum::update() {
     }
 }
 
-QNetworkAccessManager* Adiantum::getNAM() {
-    return networkManager;
+QString Adiantum::networkRequest(QString url) {
+    QNetworkRequest request(url);
+    QNetworkReply* reply = networkManager->get(request);
+    QString response = "";
+    QEventLoop loop;
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray bytes = reply->readAll();
+        response = QString::fromUtf8(bytes.data(), bytes.size());
+    } else {
+        response = "ERROR";
+    }
+    reply->deleteLater();
+    return response;
 }
 
 void Adiantum::openAboutWindow() {
@@ -69,11 +83,6 @@ void Adiantum::openAboutWindow() {
 
 void Adiantum::closeApp() {
     QApplication::quit();
-}
-
-void Adiantum::executeCommand(QString command) {
-    ShellExecute(0, 0, reinterpret_cast<const WCHAR*>(command.utf16()), 0, 0, SW_NORMAL);
-    switchWindow();
 }
 
 void Adiantum::switchWindow() {
