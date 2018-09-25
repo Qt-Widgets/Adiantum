@@ -13,7 +13,8 @@ void ext_switch_window() {
     Adiantum::getInstance()->switchWindow();
 }
 
-Element::Element(QString name, int width, int height) {
+Element::Element(QWidget *parent, QString name, int width, int height) {
+    this->setParent(parent);
     this->setObjectName(name);
     this->setFixedWidth(width);
     this->setFixedHeight(height);
@@ -58,7 +59,10 @@ Element::Element(QString name, int width, int height) {
     });
 
     safe_onleftclick = state["onLeftClick"];
+    this->show();
 }
+
+void Element::update() {}
 
 void Element::mousePressEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::RightButton) {

@@ -10,10 +10,8 @@ class Webloader : public Element {
     Q_OBJECT
 
 public:
-    Webloader(QString name, QString url, int width, int height);
-
-protected:
-    void load();
+    Webloader(QWidget *parent, QString name, QString url, int width, int height);
+    void update() override;
 
 private:
     QUrl url;

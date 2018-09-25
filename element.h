@@ -11,7 +11,7 @@ class Element : public QLabel {
     Q_OBJECT
 
 public:
-    Element(QString name, int width, int height);
+    Element(QWidget *parent, QString name, int width, int height);
     static const int GRID_SIZE = 16;
     QPointF floorToGrid(const QPointF& pointP);
     void mousePressEvent(QMouseEvent *event);
@@ -20,6 +20,7 @@ public:
     sol::state state;
     sol::protected_function safe_onleftclick;
     std::string readFile(QString path);
+    virtual void update();
 
 protected:
     QHBoxLayout *content_layout;

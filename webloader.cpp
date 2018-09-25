@@ -3,7 +3,7 @@
 #include "element.h"
 #include <QtNetwork>
 
-Webloader::Webloader(QString name, QString url, int width, int height) : Element(name, width, height) {
+Webloader::Webloader(QWidget *parent, QString name, QString url, int width, int height) : Element(parent, name, width, height) {
     this->url = QUrl(url);
     loader = new QLabel(this);
     QMovie *movie = new QMovie(":res/images/loader.gif");
@@ -25,12 +25,13 @@ Webloader::Webloader(QString name, QString url, int width, int height) : Element
                 QPushButton#refresh:hover {\
                     background: rgba(255,255,255,0.2);\
                 }");
+    refresh->show();
     refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
     connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
     safe_onrequestdone = state["onRequestDone"];
 }
 
-void Webloader::load() {
+void Webloader::update() {
     loader->show();
     loader->movie()->start();
     refresh->hide();
@@ -41,7 +42,7 @@ void Webloader::load() {
 }
 
 void Webloader::refreshButtonClick() {
-    this->load();
+    this->update();
 }
 
 void Webloader::requestDone() {

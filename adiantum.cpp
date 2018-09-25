@@ -42,17 +42,21 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
 
     this->showFullScreen();
 
-    Element *element = new Element("test", 64, 64);
-    element->setPixmap(QPixmap(":/res/images/cmd.png"));
-    element->setParent(this);
-    element->move(200,200);
-    element->show();
+    elements.insert("test", new Element(this, "test", 64, 64));
+    elements.insert("weather", new Webloader(this, "weather", "https://www.metaweather.com/api/location/2122265/", 192, 64));
 
-    Webloader *weather = new Webloader("test", "https://www.metaweather.com/api/location/2122265/", 192, 64);
-    weather->setParent(this);
-    weather->move(264,200);
-    weather->update();
-    weather->show();
+    elements["test"]->setPixmap(QPixmap(":/res/images/cmd.png"));
+    elements["test"]->move(200,200);
+
+    elements["weather"]->move(264,200);
+}
+
+void Adiantum::update() {
+    QMapIterator<QString, Element*> i(elements);
+    while (i.hasNext()) {
+        i.next();
+        i.value()->update();
+    }
 }
 
 QNetworkAccessManager* Adiantum::getNAM() {

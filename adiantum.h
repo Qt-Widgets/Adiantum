@@ -5,6 +5,8 @@
 #include <QtWidgets>
 #include <QtNetwork>
 
+#include "element.h"
+
 namespace Ui {
 class Adiantum;
 }
@@ -19,7 +21,9 @@ public:
     ~Adiantum();
     void switchWindow();
     void executeCommand(QString command);
+    QMap<QString, Element*> elements;
     QNetworkAccessManager* getNAM();
+    void update();
 
 public slots:
    void openAboutWindow();

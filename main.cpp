@@ -6,6 +6,7 @@ int main(int argc, char *argv[]) {
     try {
         Adiantum *adiantum = Adiantum::getInstance();
         adiantum->show();
+        adiantum->update();
         app.setQuitOnLastWindowClosed(false);
         return app.exec();
     } catch(...) {
