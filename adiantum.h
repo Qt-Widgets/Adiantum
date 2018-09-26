@@ -20,7 +20,6 @@ public:
     void closeEvent(QCloseEvent *e);
     ~Adiantum();
     void switchWindow();
-    QString scripts_path;
     QString networkRequest(QString url);
     void update();
     void loadElements();

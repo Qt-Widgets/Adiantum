@@ -37,9 +37,6 @@ HEADERS  += \
     ./lib/lua/include/lualib.h \
     ./lib/sol/sol.hpp \
 
-RESOURCES += \
-    resources.qrc
-
 LIBS += -L$$PWD/lib/lua/ -llua53 \
 
 INCLUDEPATH += $$PWD/lib/lua/include \
@@ -54,15 +51,19 @@ CONFIG(debug, debug|release) {
 }
 
 win32 {
-    COPY_FROM_PATH=$$shell_path($$PWD/scripts)
-    COPY_TO_PATH=$$shell_path($$DESTDIR)
+    COPY_SCRIPTS_FROM_PATH=$$shell_path($$PWD/scripts)
+    COPY_SCRIPTS_TO_PATH=$$shell_path($$DESTDIR)
+    COPY_RESOURCES_FROM_PATH=$$shell_path($$PWD/res)
+    COPY_RESOURCES_TO_PATH=$$shell_path($$DESTDIR)
 }
 else {
-    COPY_FROM_PATH=$$PWD/scripts
-    COPY_TO_PATH=$$DESTDIR
+    COPY_SCRIPTS_FROM_PATH=$$PWD/scripts
+    COPY_SCRIPTS_TO_PATH=$$DESTDIR
+    COPY_RESOURCES_FROM_PATH=$$PWD/res
+    COPY_RESOURCES_TO_PATH=$$DESTDIR
 }
 
-copydata.commands = $(COPY_DIR) \"$$COPY_FROM_PATH\" \"$$COPY_TO_PATH\"
+copydata.commands = $(COPY_DIR) \"$$COPY_SCRIPTS_FROM_PATH\" \"$$COPY_SCRIPTS_TO_PATH\" && $(COPY_DIR) \"$$COPY_RESOURCES_FROM_PATH\" \"$$COPY_RESOURCES_TO_PATH\"
 first.depends = $(first) copydata
 
 export(first.depends)

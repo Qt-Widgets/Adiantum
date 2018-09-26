@@ -14,13 +14,11 @@ Adiantum* Adiantum::getInstance() {
 Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->setObjectName("adiantum");
     this->setStyleSheet("#adiantum {background:black;}");
-    this->setWindowIcon(QIcon(QPixmap(":/res/images/app_icon.png")));
+    this->setWindowIcon(QIcon(QPixmap(QCoreApplication::applicationDirPath()+"/res/images/default/app_icon.png")));
     this->setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     if(!RegisterHotKey(HWND(winId()), 0, 0, 0x6B)) {
         throw("Can’t register hotkey");
     }
-
-    scripts_path = QDir(QCoreApplication::applicationDirPath()).filePath("scripts");
 
     networkManager = new QNetworkAccessManager();
     QSslConfiguration::defaultConfiguration();
@@ -38,14 +36,14 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     trayIconMenu->addAction(quitAction);
 
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon(QPixmap(":/res/images/tray_icon.png")));
+    trayIcon->setIcon(QIcon(QPixmap(QCoreApplication::applicationDirPath()+"/res/images/default/tray_icon.png")));
     trayIcon->show();
 
     this->showFullScreen();
 }
 
 void Adiantum::loadElements() {
-    QStringList files = QDir(scripts_path).entryList(QStringList() << "*.lua", QDir::Files);
+    QStringList files = QDir(QCoreApplication::applicationDirPath()+"/scripts").entryList(QStringList() << "*.lua", QDir::Files);
     foreach (QString filename, files) {
         QString name = filename.split(".",QString::SkipEmptyParts).at(0);
         elements.insert(name, new Element(this, name));

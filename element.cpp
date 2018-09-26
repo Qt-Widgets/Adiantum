@@ -16,6 +16,17 @@ const int Element::DEFAULT_ELEMENT_SIZE = 64;
 Element::Element(QWidget *parent, QString name) {
     this->setParent(parent);
     this->setObjectName(name);
+    this->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    this->setStyleSheet(
+        "#"+name+" {\
+            background: rgba(255,255,255,0.1);\
+        }\
+        #"+name+":hover {\
+            background: rgba(255,255,255,0.2);\
+        }");
+    content_layout = new QHBoxLayout(this);
+    content_layout->setMargin(0);
+    content = new QLabel(this);
 
     /* load Lua libraries and external Adiantum functions */
     state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
@@ -24,7 +35,7 @@ Element::Element(QWidget *parent, QString name) {
 
     /* open Lua script with same name as this instance */
     try {
-        state.safe_script(readFile(QDir(Adiantum::getInstance()->scripts_path).filePath(name + ".lua")));
+        state.safe_script(readFile(QCoreApplication::applicationDirPath()+"/scripts/"+name+".lua"));
     } catch( const sol::error& e ) {
         this->renderLuaError();
         qDebug() << "[Error] Element "+this->objectName()+" : "+e.what();
@@ -34,8 +45,7 @@ Element::Element(QWidget *parent, QString name) {
     sol::table modules = state["modules"].get_or(sol::table(state, sol::create));
     modules.for_each([&](const sol::object&, const sol::object& value) {
         std::string module_name = state["tostring"](value);
-        //todo: fix hardcoded slashes in path
-        QString module_path(Adiantum::getInstance()->scripts_path + "/modules/"+QString::fromStdString(module_name)+".lua");
+        QString module_path(QCoreApplication::applicationDirPath()+"/scripts/modules/"+QString::fromStdString(module_name)+".lua");
         if (QFile::exists(module_path)) {
             state.require_script(module_name, readFile(module_path));
         } else {
@@ -59,23 +69,10 @@ Element::Element(QWidget *parent, QString name) {
     this->move(QPoint(x,y));
 
     std::string icon = state["config"]["icon"].get_or(std::string(""));
-    setPixmap(QPixmap(QString::fromStdString(icon)));
+    setPixmap(QPixmap(QString::fromStdString(icon).replace("%APP_DIR%", QCoreApplication::applicationDirPath())));
 
     this->setFixedWidth(width);
     this->setFixedHeight(height);
-
-    this->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    this->setStyleSheet(
-        "#"+name+" {\
-            background: rgba(255,255,255,0.1);\
-        }\
-        #"+name+":hover {\
-            background: rgba(255,255,255,0.2);\
-        }");
-    content_layout = new QHBoxLayout(this);
-    content_layout->setMargin(0);
-
-    content = new QLabel(this);
     content->setFixedWidth(width);
     content->setFixedHeight(height);
     content->setAttribute(Qt::WA_TranslucentBackground);
@@ -85,7 +82,7 @@ Element::Element(QWidget *parent, QString name) {
     content_layout->addWidget(content);
 
     loader = new QLabel(this);
-    QMovie *movie = new QMovie(":res/images/loader.gif");
+    QMovie *movie = new QMovie(QCoreApplication::applicationDirPath()+"/res/images/default/loader.gif");
     movie->setScaledSize(QSize(DEFAULT_ELEMENT_SIZE, DEFAULT_ELEMENT_SIZE));
     movie->setSpeed(200);
     loader->setFixedSize(QSize(this->width(), this->height()));
@@ -93,7 +90,7 @@ Element::Element(QWidget *parent, QString name) {
     loader->setAttribute(Qt::WA_TranslucentBackground);
     loader->setMovie(movie);
     refresh = new QPushButton(this);
-    refresh->setIcon(QIcon(":res/images/refresh.png"));
+    refresh->setIcon(QIcon(QCoreApplication::applicationDirPath()+"/res/images/default/refresh.png"));
     refresh->setFixedSize(refresh->iconSize());
     refresh->setObjectName("refresh");
     refresh->setStyleSheet(
@@ -145,9 +142,10 @@ void Element::updateCompleted(QString result) {
     loader->movie()->stop();
     refresh->show();
     if (result != "ERROR") {
+        result = result.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
         content->setText(result);
     } /*else {
-        content->setText("<html><img src=':/res/images/disconnect.png'></html>");
+        content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/disconnect.png'></html>");
     }*/
 }
 
@@ -161,7 +159,7 @@ void Element::mousePressEvent(QMouseEvent *event) {
 }
 
 void Element::renderLuaError() {
-    content->setText("<html><img src=':/res/images/error.png'></html>");
+    content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/error.png'></html>");
 }
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
