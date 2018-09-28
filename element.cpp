@@ -32,6 +32,7 @@ Element::Element(QWidget *parent, QString name) {
     state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
     state.set_function("adiantum_switch_window", ext_switch_window);
     state.set_function("adiantum_network_request", ext_network_request);
+    state.set_function("adiantum_render_error", &Element::renderLuaError, this);
 
     /* open Lua script with same name as this instance */
     try {
@@ -61,12 +62,19 @@ Element::Element(QWidget *parent, QString name) {
     auto auto_onupdate = state["onUpdate"];
     canBeUpdated = auto_onupdate.valid();
 
-    /* flag canBeUpdated used to define visibility of refresh button */
+    /* reading Lua config table */
     int width = state["config"]["w"].get_or(DEFAULT_ELEMENT_SIZE);
     int height = state["config"]["h"].get_or(DEFAULT_ELEMENT_SIZE);
     int x = state["config"]["x"].get_or(0);
     int y = state["config"]["y"].get_or(0);
     this->move(QPoint(x,y));
+
+    int interval = state["config"]["update_interval"].get_or(0);
+    if (interval > 0) {
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+        timer->start(interval);
+    }
 
     std::string icon = state["config"]["icon"].get_or(std::string(""));
     setPixmap(QPixmap(QString::fromStdString(icon).replace("%APP_DIR%", QCoreApplication::applicationDirPath())));
