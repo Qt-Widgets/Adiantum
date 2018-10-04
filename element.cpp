@@ -29,7 +29,7 @@ Element::Element(QWidget *parent, QString name) {
     content = new QLabel(this);
 
     /* load Lua libraries and external Adiantum functions */
-    state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
+    state.open_libraries(sol::lib::base);
     state.set_function("ext_switch_window", External::switch_window);
     state.set_function("ext_network_request", External::network_request);
     state.set_function("ext_read_file", External::read_file);
@@ -43,9 +43,22 @@ Element::Element(QWidget *parent, QString name) {
     }
 
     /* load Lua modules defined in "modules" table */
-    sol::table modules = state["modules"].get_or(sol::table(state, sol::create));
+    sol::table modules = state["config"]["modules"].get_or(sol::table(state, sol::create));
     modules.for_each([&](const sol::object&, const sol::object& value) {
         std::string module_name = state["tostring"](value);
+        /* reserved names for default Lua libraries */
+        if (module_name == "package") { state.open_libraries(sol::lib::package); return; }
+        if (module_name == "coroutine") { state.open_libraries(sol::lib::coroutine); return; }
+        if (module_name == "string") { state.open_libraries(sol::lib::string); return; }
+        if (module_name == "os") { state.open_libraries(sol::lib::os); return; }
+        if (module_name == "math") { state.open_libraries(sol::lib::math); return; }
+        if (module_name == "table") { state.open_libraries(sol::lib::table); return; }
+        if (module_name == "debug") { state.open_libraries(sol::lib::debug); return; }
+        if (module_name == "bit32") { state.open_libraries(sol::lib::bit32); return; }
+        if (module_name == "io") { state.open_libraries(sol::lib::io); return; }
+        if (module_name == "ffi") { state.open_libraries(sol::lib::ffi); return; }
+        if (module_name == "jit") { state.open_libraries(sol::lib::jit); return; }
+        if (module_name == "utf8") { state.open_libraries(sol::lib::utf8); return; }
         QString module_path(QCoreApplication::applicationDirPath()+"/scripts/modules/"+QString::fromStdString(module_name)+".lua");
         if (QFile::exists(module_path)) {
             state.require_script(module_name, External::read_file(module_path.toStdString()));

@@ -1,6 +1,13 @@
 -- weather.lua
-config = {x=264, y=200, w=192, h=64, url="https://www.metaweather.com/api/location/2122265/", update_interval=60000}
-modules = {"json"}
+config = {
+	modules = {"string", "math", "utf8", "json"},
+	x=264,
+	y=200,
+	w=192,
+	h=64,
+	url="https://www.metaweather.com/api/location/2122265/",
+	update_interval=60000
+}
 
 function onLeftClick()
 end

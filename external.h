@@ -8,9 +8,6 @@ class External : public QObject {
 
 public:
     static void switch_window();
-    static std::string get_total_ram();
-    static std::string get_used_ram();
-    static std::string get_available_ram();
     static std::string network_request(std::string url);
     static std::string read_file(std::string path);
 };
