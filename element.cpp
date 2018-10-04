@@ -87,6 +87,10 @@ Element::Element(QWidget *parent, QString name) {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(update()));
         timer->start(interval);
+        QTimer *single = new QTimer(this);
+        connect(single, SIGNAL(timeout()), this, SLOT(update()));
+        single->setSingleShot(true);
+        single->start(200);
     }
 
     std::string icon = state["config"]["icon"].get_or(std::string(""));

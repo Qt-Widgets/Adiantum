@@ -50,14 +50,6 @@ void Adiantum::loadElements() {
     }
 }
 
-void Adiantum::update() {
-    QMapIterator<QString, Element*> i(elements);
-    while (i.hasNext()) {
-        i.next();
-        i.value()->update();
-    }
-}
-
 QString Adiantum::networkRequest(QString url) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
