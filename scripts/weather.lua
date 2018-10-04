@@ -6,7 +6,7 @@ function onLeftClick()
 end
 
 function onUpdate()
-	local response = adiantum_network_request(config["url"])
+	local response = ext_network_request(config["url"])
 	local data = json.decode(response)
 	weather = data["consolidated_weather"][1]["weather_state_name"]
 	icon = data["consolidated_weather"][1]["weather_state_abbr"]

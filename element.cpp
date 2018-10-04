@@ -30,13 +30,13 @@ Element::Element(QWidget *parent, QString name) {
 
     /* load Lua libraries and external Adiantum functions */
     state.open_libraries(sol::lib::os, sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::utf8);
-    state.set_function("adiantum_switch_window", ext_switch_window);
-    state.set_function("adiantum_network_request", ext_network_request);
-    state.set_function("adiantum_render_error", &Element::renderLuaError, this);
+    state.set_function("ext_switch_window", External::switch_window);
+    state.set_function("ext_network_request", External::network_request);
+    state.set_function("ext_read_file", External::read_file);
 
     /* open Lua script with same name as this instance */
     try {
-        state.safe_script(readFile(QCoreApplication::applicationDirPath()+"/scripts/"+name+".lua"));
+        state.safe_script(External::read_file((QCoreApplication::applicationDirPath()+"/scripts/"+name+".lua").toStdString()));
     } catch( const sol::error& e ) {
         this->renderLuaError();
         qDebug() << "[Error] Element "+this->objectName()+" : "+e.what();
@@ -48,7 +48,7 @@ Element::Element(QWidget *parent, QString name) {
         std::string module_name = state["tostring"](value);
         QString module_path(QCoreApplication::applicationDirPath()+"/scripts/modules/"+QString::fromStdString(module_name)+".lua");
         if (QFile::exists(module_path)) {
-            state.require_script(module_name, readFile(module_path));
+            state.require_script(module_name, External::read_file(module_path.toStdString()));
         } else {
             qDebug() << "[Warning] Element "+this->objectName()+": cannot open module " +module_path;
         }
@@ -172,6 +172,8 @@ void Element::renderLuaError() {
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::RightButton) {
-        this->move(mapToParent(floorToGrid(event->pos() - offset, GRID_SIZE).toPoint()));
+        qreal xV = floor((event->pos() - offset).x()/GRID_SIZE)*GRID_SIZE;
+        qreal yV = floor((event->pos() - offset).y()/GRID_SIZE)*GRID_SIZE;
+        this->move(mapToParent(QPointF(xV, yV).toPoint()));
     }
 }

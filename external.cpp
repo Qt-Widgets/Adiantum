@@ -1,26 +1,20 @@
+#include "external.h"
 #include "adiantum.h"
 
-void ext_switch_window() {
+void External::ext_switch_window() {
     Adiantum::getInstance()->switchWindow();
 }
 
-std::string ext_network_request(std::string url) {
+std::string External::ext_network_request(std::string url) {
     return Adiantum::getInstance()->networkRequest(QString::fromStdString(url)).toStdString();
 }
 
-std::string readFile(QString path) {
+std::string External::ext_read_file(std::string path) {
     QString data;
-    QFile file(path);
+    QFile file(QString::fromStdString(path));
     if(file.open(QIODevice::ReadOnly)) {
         data = file.readAll();
     }
     file.close();
     return data.toStdString();
-}
-
-
-QPointF floorToGrid(const QPointF& point, int grid_size) {
-    qreal xV = floor(point.x()/grid_size)*grid_size;
-    qreal yV = floor(point.y()/grid_size)*grid_size;
-    return QPointF(xV, yV);
 }

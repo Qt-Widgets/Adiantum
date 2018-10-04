@@ -1,9 +1,18 @@
 #ifndef EXTERNAL_H
 #define EXTERNAL_H
 
-void ext_switch_window();
-std::string ext_network_request(std::string url);
-std::string readFile(QString path);
-QPointF floorToGrid(const QPointF& point, int grid_size);
+#include <QObject>
+
+class External : public QObject {
+    Q_OBJECT
+
+public:
+    static void switch_window();
+    static std::string get_total_ram();
+    static std::string get_used_ram();
+    static std::string get_available_ram();
+    static std::string network_request(std::string url);
+    static std::string read_file(std::string path);
+};
 
 #endif // EXTERNAL_H
