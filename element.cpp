@@ -106,56 +106,53 @@ Element::Element(QWidget *parent, QString name) {
     content->setTextFormat(Qt::RichText);
     content_layout->addWidget(content);
 
-    loader = new QLabel(this);
-    QMovie *movie = new QMovie(QCoreApplication::applicationDirPath()+"/res/images/default/loader.gif");
-    movie->setScaledSize(QSize(DEFAULT_ELEMENT_SIZE, DEFAULT_ELEMENT_SIZE));
-    movie->setSpeed(200);
-    loader->setFixedSize(QSize(this->width(), this->height()));
-    loader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    loader->setAttribute(Qt::WA_TranslucentBackground);
-    loader->setMovie(movie);
-    refresh = new QPushButton(this);
-    refresh->setIcon(QIcon(QCoreApplication::applicationDirPath()+"/res/images/default/refresh.png"));
-    refresh->setFixedSize(refresh->iconSize());
-    refresh->setObjectName("refresh");
-    refresh->setStyleSheet(
-                "QPushButton#refresh {\
-                    background: transparent;\
-                    border: none;\
-                }\
-                QPushButton#refresh:hover {\
-                    background: rgba(255,255,255,0.2);\
-                }");
-
-    refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
-    connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
-
     if (canBeUpdated) {
-        refresh->show();
-    } else {
-        refresh->hide();
+        loader = new QLabel(this);
+        QMovie *movie = new QMovie(QCoreApplication::applicationDirPath()+"/res/images/default/loader.gif");
+        movie->setScaledSize(QSize(DEFAULT_ELEMENT_SIZE, DEFAULT_ELEMENT_SIZE));
+        movie->setSpeed(200);
+        loader->setFixedSize(QSize(this->width(), this->height()));
+        loader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        loader->setAttribute(Qt::WA_TranslucentBackground);
+        loader->setMovie(movie);
+        refresh = new QPushButton(this);
+        refresh->setIcon(QIcon(QCoreApplication::applicationDirPath()+"/res/images/default/refresh.png"));
+        refresh->setFixedSize(refresh->iconSize());
+        refresh->setObjectName("refresh");
+        refresh->setStyleSheet(
+                    "QPushButton#refresh {\
+                        background: transparent;\
+                        border: none;\
+                    }\
+                    QPushButton#refresh:hover {\
+                        background: rgba(255,255,255,0.2);\
+                    }");
+
+        refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
+        connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
     }
 
     this->show();
 }
 
 void Element::update() {
-    if (!canBeUpdated) return;
-    loader->show();
-    loader->movie()->start();
-    refresh->hide();
-    content->setText("<html></html>");
-    auto auto_result = safe_onupdate();
-    std::string result = auto_result;
-    QString pass = "";
-    if(auto_result.valid()) {
-        pass = QString::fromStdString(result);
-    } else {
-        this->renderLuaError();
-        qDebug() << "[Error] Element "+this->objectName()+" : "+QString::fromStdString(result);
-        pass = "ERROR";
+    if (canBeUpdated) {
+        loader->show();
+        loader->movie()->start();
+        refresh->hide();
+        content->setText("<html></html>");
+        auto auto_result = safe_onupdate();
+        std::string result = auto_result;
+        QString pass = "";
+        if(auto_result.valid()) {
+            pass = QString::fromStdString(result);
+        } else {
+            this->renderLuaError();
+            qDebug() << "[Error] Element "+this->objectName()+" : "+QString::fromStdString(result);
+            pass = "ERROR";
+        }
+        updateCompleted(pass);
     }
-    updateCompleted(pass);
 }
 
 void Element::refreshButtonClick() {
@@ -163,15 +160,17 @@ void Element::refreshButtonClick() {
 }
 
 void Element::updateCompleted(QString result) {
-    loader->hide();
-    loader->movie()->stop();
-    refresh->show();
-    if (result != "ERROR") {
-        result = result.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
-        content->setText(result);
-    } /*else {
-        content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/disconnect.png'></html>");
-    }*/
+    if (canBeUpdated) {
+        loader->hide();
+        loader->movie()->stop();
+        refresh->show();
+        if (result != "ERROR") {
+            result = result.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
+            content->setText(result);
+        } /*else {
+            content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/disconnect.png'></html>");
+        }*/
+    }
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {

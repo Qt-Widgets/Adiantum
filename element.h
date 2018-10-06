@@ -20,7 +20,6 @@ public:
     sol::state state;
     sol::protected_function safe_onleftclick;
     sol::protected_function safe_onupdate;
-    void updateCompleted(QString result);
 
 protected:
     QHBoxLayout *content_layout;
@@ -31,6 +30,7 @@ private:
     QPushButton *refresh;
     QLabel *loader;
     bool canBeUpdated;
+    void updateCompleted(QString result);
 
 public slots:
     void update();
