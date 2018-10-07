@@ -167,6 +167,7 @@ void Element::updateCompleted(QString result) {
         if (result != "ERROR") {
             result = result.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
             content->setText(result);
+            //qDebug() << "[Update] Element "+this->objectName()+" : "+result;
         } /*else {
             content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/disconnect.png'></html>");
         }*/

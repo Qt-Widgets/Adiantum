@@ -14,6 +14,9 @@ end
 
 function onUpdate()
 	local response = ext_network_request(config["url"])
+	if response == "ERROR" then
+		return [[<html><img src='%APP_DIR%/res/images/default/disconnect.png'></html>]]
+	end
 	local data = json.decode(response)
 	weather = data["consolidated_weather"][1]["weather_state_name"]
 	icon = data["consolidated_weather"][1]["weather_state_abbr"]

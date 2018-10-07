@@ -54,15 +54,34 @@ QString Adiantum::networkRequest(QString url) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
     QString response = "";
+
+    QTimer timer;
+    timer.setSingleShot(true);
+
     QEventLoop loop;
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    timer.start(5000); // 5 secs timeout
     loop.exec();
-    if (reply->error() == QNetworkReply::NoError) {
-        QByteArray bytes = reply->readAll();
-        response = QString::fromUtf8(bytes.data(), bytes.size());
-    } else {
+
+    if(timer.isActive()) {
+        timer.stop();
+        if(reply->error() > 0) {
+            response = "ERROR";
+        }
+        else {
+            int v = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+            if (v >= 200 && v < 300) {  // Success
+                QByteArray bytes = reply->readAll();
+                response = QString::fromUtf8(bytes.data(), bytes.size());
+            }
+        }
+    } else { // timeout
         response = "ERROR";
+        disconnect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+        reply->abort();
     }
+
     reply->deleteLater();
     return response;
 }
