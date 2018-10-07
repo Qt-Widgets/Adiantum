@@ -24,13 +24,13 @@ public:
 protected:
     QHBoxLayout *content_layout;
     void renderLuaError();
+    void renderNetworkError();
 
 private:
     QPoint offset;
     QPushButton *refresh;
     QLabel *loader;
     bool canBeUpdated;
-    void updateCompleted(QString result);
 
 public slots:
     void update();

@@ -66,18 +66,18 @@ QString Adiantum::networkRequest(QString url) {
 
     if(timer.isActive()) {
         timer.stop();
-        if(reply->error() > 0) {
-            response = "ERROR";
+        if(reply->error() > 0) { // server returned error
+            response = "NETWORK_ERROR_FLAG";
         }
         else {
             int v = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-            if (v >= 200 && v < 300) {  // Success
+            if (v >= 200 && v < 300) { // server responded with no errors
                 QByteArray bytes = reply->readAll();
                 response = QString::fromUtf8(bytes.data(), bytes.size());
             }
         }
     } else { // timeout
-        response = "ERROR";
+        response = "NETWORK_ERROR_FLAG";
         disconnect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
         reply->abort();
     }

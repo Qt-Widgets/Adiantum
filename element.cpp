@@ -143,35 +143,28 @@ void Element::update() {
         content->setText("<html></html>");
         auto auto_result = safe_onupdate();
         std::string result = auto_result;
-        QString pass = "";
         if(auto_result.valid()) {
-            pass = QString::fromStdString(result);
+            QString qresult = QString::fromStdString(result);
+            if (qresult == "NETWORK_ERROR_FLAG") {
+                this->renderNetworkError();
+                qDebug() << "[Error] Element "+this->objectName()+" : Network error";
+            } else {
+                qresult = qresult.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
+                content->setText(qresult);
+                //qDebug() << "[Update] Element "+this->objectName()+" : "+result;
+            }
         } else {
             this->renderLuaError();
             qDebug() << "[Error] Element "+this->objectName()+" : "+QString::fromStdString(result);
-            pass = "ERROR";
         }
-        updateCompleted(pass);
+        loader->hide();
+        loader->movie()->stop();
+        refresh->show();
     }
 }
 
 void Element::refreshButtonClick() {
     this->update();
-}
-
-void Element::updateCompleted(QString result) {
-    if (canBeUpdated) {
-        loader->hide();
-        loader->movie()->stop();
-        refresh->show();
-        if (result != "ERROR") {
-            result = result.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
-            content->setText(result);
-            //qDebug() << "[Update] Element "+this->objectName()+" : "+result;
-        } /*else {
-            content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/disconnect.png'></html>");
-        }*/
-    }
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
@@ -184,7 +177,11 @@ void Element::mousePressEvent(QMouseEvent *event) {
 }
 
 void Element::renderLuaError() {
-    content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/error.png'></html>");
+    content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/lua_error.png'></html>");
+}
+
+void Element::renderNetworkError() {
+    content->setText("<html><img src='"+QCoreApplication::applicationDirPath()+"/res/images/default/network_error.png'></html>");
 }
 
 void Element::mouseMoveEvent(QMouseEvent *event) {
