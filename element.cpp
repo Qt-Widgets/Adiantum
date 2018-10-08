@@ -75,6 +75,14 @@ Element::Element(QWidget *parent, QString name) {
     auto auto_onupdate = state["onUpdate"];
     canBeUpdated = auto_onupdate.valid();
 
+    /* flag loaderEnabled used to control preloader creation */
+    auto a_loaderEnabled = state["config"]["loader_enabled"];
+    loaderEnabled = (a_loaderEnabled.valid()) ? a_loaderEnabled.get<bool>() : true;
+
+    /* flag manualRefreshEnabled used to control refresh button creation */
+    auto a_manualRefreshEnabled = state["config"]["manual_refresh_enabled"];
+    manualRefreshEnabled = (a_manualRefreshEnabled.valid()) ? a_manualRefreshEnabled.get<bool>() : true;
+
     /* reading Lua config table */
     int width = state["config"]["w"].get_or(DEFAULT_ELEMENT_SIZE);
     int height = state["config"]["h"].get_or(DEFAULT_ELEMENT_SIZE);
@@ -107,29 +115,33 @@ Element::Element(QWidget *parent, QString name) {
     content_layout->addWidget(content);
 
     if (canBeUpdated) {
-        loader = new QLabel(this);
-        QMovie *movie = new QMovie(QCoreApplication::applicationDirPath()+"/res/images/default/loader.gif");
-        movie->setScaledSize(QSize(DEFAULT_ELEMENT_SIZE, DEFAULT_ELEMENT_SIZE));
-        movie->setSpeed(200);
-        loader->setFixedSize(QSize(this->width(), this->height()));
-        loader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        loader->setAttribute(Qt::WA_TranslucentBackground);
-        loader->setMovie(movie);
-        refresh = new QPushButton(this);
-        refresh->setIcon(QIcon(QCoreApplication::applicationDirPath()+"/res/images/default/refresh.png"));
-        refresh->setFixedSize(refresh->iconSize());
-        refresh->setObjectName("refresh");
-        refresh->setStyleSheet(
-                    "QPushButton#refresh {\
-                        background: transparent;\
-                        border: none;\
-                    }\
-                    QPushButton#refresh:hover {\
-                        background: rgba(255,255,255,0.2);\
-                    }");
+        if (loaderEnabled) {
+            loader = new QLabel(this);
+            QMovie *movie = new QMovie(QCoreApplication::applicationDirPath()+"/res/images/default/loader.gif");
+            movie->setScaledSize(QSize(DEFAULT_ELEMENT_SIZE, DEFAULT_ELEMENT_SIZE));
+            movie->setSpeed(200);
+            loader->setFixedSize(QSize(this->width(), this->height()));
+            loader->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            loader->setAttribute(Qt::WA_TranslucentBackground);
+            loader->setMovie(movie);
+        }
+        if (manualRefreshEnabled) {
+            refresh = new QPushButton(this);
+            refresh->setIcon(QIcon(QCoreApplication::applicationDirPath()+"/res/images/default/refresh.png"));
+            refresh->setFixedSize(refresh->iconSize());
+            refresh->setObjectName("refresh");
+            refresh->setStyleSheet(
+                        "QPushButton#refresh {\
+                            background: transparent;\
+                            border: none;\
+                        }\
+                        QPushButton#refresh:hover {\
+                            background: rgba(255,255,255,0.2);\
+                        }");
 
-        refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
-        connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
+            refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
+            connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
+        }
     }
 
     this->show();
@@ -137,9 +149,13 @@ Element::Element(QWidget *parent, QString name) {
 
 void Element::update() {
     if (canBeUpdated) {
-        loader->show();
-        loader->movie()->start();
-        refresh->hide();
+        if (loaderEnabled) {
+            loader->show();
+            loader->movie()->start();
+        }
+        if (manualRefreshEnabled) {
+            refresh->hide();
+        }
         content->setText("<html></html>");
         auto auto_result = safe_onupdate();
         std::string result = auto_result;
@@ -157,9 +173,13 @@ void Element::update() {
             this->renderLuaError();
             qDebug() << "[Error] Element "+this->objectName()+" : "+QString::fromStdString(result);
         }
-        loader->hide();
-        loader->movie()->stop();
-        refresh->show();
+        if (loaderEnabled) {
+            loader->hide();
+            loader->movie()->stop();
+        }
+        if (manualRefreshEnabled) {
+            refresh->show();
+        }
     }
 }
 

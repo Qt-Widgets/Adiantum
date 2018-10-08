@@ -5,6 +5,8 @@ config = {
 	y=264,
 	w=192,
 	h=64,
+	loader_enabled=false,
+	manual_refresh_enabled=false,
 	update_interval=1000
 }
 

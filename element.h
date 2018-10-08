@@ -31,6 +31,8 @@ private:
     QPushButton *refresh;
     QLabel *loader;
     bool canBeUpdated;
+    bool manualRefreshEnabled;
+    bool loaderEnabled;
 
 public slots:
     void update();
