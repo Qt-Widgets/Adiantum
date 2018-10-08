@@ -30,6 +30,7 @@ private:
     QPoint offset;
     QPushButton *refresh;
     QLabel *loader;
+    QLabel *corner;
     bool canBeUpdated;
     bool manualRefreshEnabled;
     bool loaderEnabled;

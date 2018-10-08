@@ -114,6 +114,12 @@ Element::Element(QWidget *parent, QString name) {
     content->setTextFormat(Qt::RichText);
     content_layout->addWidget(content);
 
+    corner = new QLabel(this);
+    corner->setPixmap(QPixmap(QCoreApplication::applicationDirPath()+"/res/images/default/corner.png"));
+    corner->setFixedSize(corner->pixmap()->size());
+    corner->setAttribute(Qt::WA_TranslucentBackground);
+    corner->move(this->width() - corner->width(), 0);
+
     if (canBeUpdated) {
         if (loaderEnabled) {
             loader = new QLabel(this);
