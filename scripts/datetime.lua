@@ -19,6 +19,9 @@ function onUpdate()
 	local date_table = os.date("*t")
 	local day = daysoftheweek[date_table.wday]
 	local month = monthsoftheyear[date_table.month]
+	if date_table.min >=0 and date_table.min <= 9 then
+		date_table.min = "0"..date_table.min
+	end
 	result = [[<style>.first {padding-left:8px;color: white;vertical-align:middle;}.second {color: white;padding-right:8px;vertical-align:middle;}
              .month {font-weight:bold;font-size: 14px;}.day {font-size: 10px;}.time {font-size: 24px;}</style>
              <table width='100%'><tr>
