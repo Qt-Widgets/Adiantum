@@ -13,7 +13,10 @@ Adiantum* Adiantum::getInstance() {
 
 Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
     this->setObjectName("adiantum");
-    this->setStyleSheet("#adiantum {background:black;}");
+    QFile File(QCoreApplication::applicationDirPath()+"/res/styles/global.css");
+    File.open(QFile::ReadOnly);
+    this->setStyleSheet(QLatin1String(File.readAll()));
+    File.close();
     this->setWindowIcon(QIcon(QPixmap(QCoreApplication::applicationDirPath()+"/res/images/default/app_icon.png")));
     this->setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     if(!RegisterHotKey(HWND(winId()), 0, 0, 0x6B)) {

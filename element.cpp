@@ -17,13 +17,6 @@ Element::Element(QWidget *parent, QString name) {
     this->setParent(parent);
     this->setObjectName(name);
     this->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    this->setStyleSheet(
-        "#"+name+" {\
-            background: rgba(255,255,255,0.1);\
-        }\
-        #"+name+":hover {\
-            background: rgba(255,255,255,0.2);\
-        }");
     content_layout = new QHBoxLayout(this);
     content_layout->setMargin(0);
     content = new QLabel(this);
