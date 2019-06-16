@@ -9,6 +9,10 @@ std::string External::network_request(std::string url) {
     return Adiantum::getInstance()->networkRequest(QString::fromStdString(url)).toStdString();
 }
 
+std::string External::get_network_interfaces() {
+    return Adiantum::getInstance()->getNetworkInterfaces();
+}
+
 std::string External::read_file(std::string path) {
     QString data;
     QFile file(QString::fromStdString(path));

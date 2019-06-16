@@ -21,6 +21,7 @@ public:
     ~Adiantum();
     void switchWindow();
     QString networkRequest(QString url);
+    std::string getNetworkInterfaces();
     void loadElements();
 
 public slots:

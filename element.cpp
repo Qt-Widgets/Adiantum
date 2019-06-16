@@ -25,6 +25,7 @@ Element::Element(QWidget *parent, QString name) {
     state.open_libraries(sol::lib::base);
     state.set_function("ext_switch_window", External::switch_window);
     state.set_function("ext_network_request", External::network_request);
+    state.set_function("ext_get_network_interfaces", External::get_network_interfaces);
     state.set_function("ext_read_file", External::read_file);
 
     /* open Lua script with same name as this instance */
@@ -167,6 +168,19 @@ void Element::update() {
                 qresult = qresult.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
                 content->setText(qresult);
                 //qDebug() << "[Update] Element "+this->objectName()+" : "+result;
+            }
+            int width = state["config"]["w"].get_or(DEFAULT_ELEMENT_SIZE);
+            int height = state["config"]["h"].get_or(DEFAULT_ELEMENT_SIZE);
+            if (width != this->width()) {
+                this->setFixedWidth(width);
+                content->setFixedWidth(width);
+                corner->move(this->width() - corner->width(), 0);
+                if (manualRefreshEnabled) refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
+            }
+            if (height != this->height()) {
+                this->setFixedHeight(height);
+                content->setFixedHeight(height);
+                if (manualRefreshEnabled) refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
             }
         } else {
             this->renderLuaError();

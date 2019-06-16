@@ -2,6 +2,24 @@
 #include "element.h"
 #include "windows.h"
 
+struct NetworkInterfaceData {
+   QString name;
+   QString mac;
+   QString address;
+   QString netmask;
+   QString type;
+   NetworkInterfaceData(QString name, QString mac, QString address, QString netmask, QString type) {
+       this->name = name;
+       this->mac = mac;
+       this->address = address;
+       this->netmask = netmask;
+       this->type = type;
+   }
+   QJsonObject toJson() const {
+       return {{"name", this->name}, {"mac", this->mac}, {"address", this->address}, {"netmask", this->netmask}, {"type", this->type}};
+   }
+};
+
 Adiantum* Adiantum::instance = NULL;
 
 Adiantum* Adiantum::getInstance() {
@@ -53,6 +71,36 @@ void Adiantum::loadElements() {
     }
 }
 
+std::string Adiantum::getNetworkInterfaces() {
+    QList<NetworkInterfaceData> interfaces;
+    foreach (QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
+        if (interface.flags().testFlag(QNetworkInterface::IsLoopBack)) continue;
+        if (!interface.flags().testFlag(QNetworkInterface::IsRunning)) continue;
+        QList<QNetworkAddressEntry> entries = interface.addressEntries();
+        if (!entries.isEmpty()) {
+            QNetworkAddressEntry entry = entries.first();
+            QString type = "";
+            switch (QString::number(interface.type()).toInt()) {
+                case 8: type = "wireless"; break;
+                case 3: type = "ethernet"; break;
+                default: type = "default";
+            }
+            interfaces.append(NetworkInterfaceData(
+                                  interface.humanReadableName(),
+                                  interface.hardwareAddress(),
+                                  entry.ip().toString(),
+                                  entry.netmask().toString(),
+                                  type
+            ));
+        }
+    }
+    QJsonArray jsonarray;
+    for (auto & item : interfaces) {
+        jsonarray.append(item.toJson());
+    }
+    return std::string(QJsonDocument(jsonarray).toJson().constData());
+}
+
 QString Adiantum::networkRequest(QString url) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
@@ -90,7 +138,7 @@ QString Adiantum::networkRequest(QString url) {
 }
 
 void Adiantum::openAboutWindow() {
-    QMessageBox::about(this, "About", "Adiantum\nQT desktop widget layer\nAuthor: Andrew Chernishov (https://github.com/Screwdr1ver/)\nIcons by https://icons8.com/");
+    QMessageBox::about(this, "About", "Adiantum\nQT desktop widget layer\nAuthor: Andrey Chernishov (https://github.com/Screwdr1ver/)\nIcons by https://icons8.com/");
 }
 
 void Adiantum::closeApp() {
