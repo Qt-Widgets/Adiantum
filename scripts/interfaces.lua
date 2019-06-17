@@ -1,8 +1,6 @@
 -- interfaces.lua
 config = {
 	modules = {"string", "json"},
-	x=264,
-	y=328,
 	w=256,
 	h=64,
 	update_interval=5000

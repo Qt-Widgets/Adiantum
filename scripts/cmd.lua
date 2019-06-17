@@ -1,8 +1,6 @@
 -- cmd.lua
 config = {
 	modules = {"os"},
-	x=200,
-	y=200,
 	w=64,
 	h=64,
 	icon="%APP_DIR%/res/images/cmd.png"

@@ -23,6 +23,7 @@ public:
     QString networkRequest(QString url);
     std::string getNetworkInterfaces();
     void loadElements();
+    void saveElements();
 
 public slots:
    void openAboutWindow();
@@ -35,6 +36,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     QMap<QString, Element*> elements;
+    QFile *config;
 };
 
 #endif // ADIANTUM_H

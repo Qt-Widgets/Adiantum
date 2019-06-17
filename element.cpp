@@ -13,7 +13,7 @@ extern "C" {
 const int Element::GRID_SIZE = 16;
 const int Element::DEFAULT_ELEMENT_SIZE = 64;
 
-Element::Element(QWidget *parent, QString name) {
+Element::Element(QWidget *parent, QString name, QPoint position) {
     this->setParent(parent);
     this->setObjectName(name);
     this->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -80,9 +80,7 @@ Element::Element(QWidget *parent, QString name) {
     /* reading Lua config table */
     int width = state["config"]["w"].get_or(DEFAULT_ELEMENT_SIZE);
     int height = state["config"]["h"].get_or(DEFAULT_ELEMENT_SIZE);
-    int x = state["config"]["x"].get_or(0);
-    int y = state["config"]["y"].get_or(0);
-    this->move(QPoint(x,y));
+    this->move(position);
 
     int interval = state["config"]["update_interval"].get_or(0);
     if (interval > 0) {
@@ -237,4 +235,8 @@ void Element::mouseMoveEvent(QMouseEvent *event) {
         qreal yV = floor((event->pos() - offset).y()/GRID_SIZE)*GRID_SIZE;
         this->move(mapToParent(QPointF(xV, yV).toPoint()));
     }
+}
+
+void Element::mouseReleaseEvent(QMouseEvent *event) {
+    Adiantum::getInstance()->saveElements();
 }

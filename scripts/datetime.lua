@@ -1,8 +1,6 @@
 -- datetime.lua
 config = {
 	modules = {"os"},
-	x=264,
-	y=264,
 	w=192,
 	h=64,
 	loader_enabled=false,

@@ -11,11 +11,12 @@ class Element : public QLabel {
     Q_OBJECT
 
 public:
-    Element(QWidget *parent, QString name);
+    Element(QWidget *parent, QString name, QPoint position);
     static const int GRID_SIZE;
     static const int DEFAULT_ELEMENT_SIZE;
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     QLabel *content;
     sol::state state;
     sol::protected_function safe_onleftclick;

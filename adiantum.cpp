@@ -30,6 +30,7 @@ Adiantum* Adiantum::getInstance() {
 }
 
 Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
+    this->config = new QFile(QCoreApplication::applicationDirPath()+"/scripts/config.json");
     this->setObjectName("adiantum");
     QFile File(QCoreApplication::applicationDirPath()+"/res/styles/global.css");
     File.open(QFile::ReadOnly);
@@ -65,10 +66,42 @@ Adiantum::Adiantum(QWidget *parent) : QMainWindow(parent) {
 
 void Adiantum::loadElements() {
     QStringList files = QDir(QCoreApplication::applicationDirPath()+"/scripts").entryList(QStringList() << "*.lua", QDir::Files);
+    bool config_read_error = true;
+    QJsonObject obj;
+    if (this->config->open(QIODevice::ReadOnly)) {
+        QByteArray contents = this->config->readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(contents);
+        obj = doc.object();
+        config_read_error = false;
+        this->config->close();
+    }
     foreach (QString filename, files) {
         QString name = filename.split(".",QString::SkipEmptyParts).at(0);
-        elements.insert(name, new Element(this, name));
+        QPoint position = QPoint(0, 0);
+        if (!config_read_error) {
+            if (obj.contains(name)) {
+                QJsonObject element_data = obj.value(name).toObject();
+                position = QPoint((element_data.contains("x")) ? element_data.value("x").toInt() : 0, (element_data.contains("y")) ? element_data.value("y").toInt() : 0);
+            }
+        }
+        elements.insert(name, new Element(this, name, position));
     }
+}
+
+void Adiantum::saveElements() {
+    QJsonObject data;
+    QMap<QString, Element*>::iterator it;
+    for (it = elements.begin(); it != elements.end(); ++it) {
+        QJsonObject element_data;
+        element_data.insert("x", QJsonValue::fromVariant(it.value()->pos().x()));
+        element_data.insert("y", QJsonValue::fromVariant(it.value()->pos().y()));
+        data.insert(it.key(), element_data);
+    }
+    if (this->config->open(QIODevice::ReadWrite)) {
+        QTextStream stream(this->config);
+        stream << QJsonDocument(data).toJson().constData() << endl;
+    }
+    this->config->close();
 }
 
 std::string Adiantum::getNetworkInterfaces() {

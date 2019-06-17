@@ -1,8 +1,6 @@
 -- internet.lua
 config = {
 	modules = {"string", "json"},
-	x=456,
-	y=200,
 	w=256,
 	h=64,
 	url="http://ip-api.com/json/",
