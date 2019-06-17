@@ -8,6 +8,7 @@ Used Lua C++ wrapper: Sol2 by ThePhD: https://github.com/ThePhD/sol2
 Resources:
 * Icons and images by https://icons8.com/
 * Weather widget example powered by MetaWeather public API https://www.metaweather.com/
+* Internet widget example powered by IP Geolocation API IP-API http://ip-api.com/
 
 Dependency management:
 * Unpack Lua binaries from http://luabinaries.sourceforge.net/download.html to lib/lua directory
