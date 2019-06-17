@@ -20,11 +20,11 @@ struct NetworkInterfaceData {
    }
 };
 
-Adiantum* Adiantum::instance = NULL;
+Adiantum* Adiantum::instance = nullptr;
 
 Adiantum* Adiantum::getInstance() {
-    if (Adiantum::instance == NULL) {
-        Adiantum::instance = new Adiantum(0);
+    if (Adiantum::instance == nullptr) {
+        Adiantum::instance = new Adiantum(nullptr);
     }
     return Adiantum::instance;
 }
