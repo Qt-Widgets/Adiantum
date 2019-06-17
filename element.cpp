@@ -141,6 +141,12 @@ Element::Element(QWidget *parent, QString name) {
 
             refresh->move(this->width() - refresh->width(), this->height() - refresh->height());
             connect(refresh, SIGNAL(clicked()), this, SLOT (refreshButtonClick()));
+            refresh_error_label = new QLabel(this);
+            refresh_error_label->setPixmap(QPixmap(QCoreApplication::applicationDirPath()+"/res/images/default/warning.png"));
+            refresh_error_label->setFixedSize(refresh_error_label->pixmap()->size());
+            refresh_error_label->setAttribute(Qt::WA_TranslucentBackground);
+            refresh_error_label->move(this->width() - refresh->width() - refresh_error_label->width(), this->height() - refresh_error_label->height());
+            refresh_error_label->hide();
         }
     }
 
@@ -155,16 +161,24 @@ void Element::update() {
         }
         if (manualRefreshEnabled) {
             refresh->hide();
+            refresh_error_label->hide();
         }
-        content->setText("<html></html>");
         auto auto_result = safe_onupdate();
         std::string result = auto_result;
         if(auto_result.valid()) {
             QString qresult = QString::fromStdString(result);
             if (qresult == "NETWORK_ERROR_FLAG") {
-                this->renderNetworkError();
-                qDebug() << "[Error] Element "+this->objectName()+" : Network error";
+                if (!this->contentAcquired) {
+                    this->renderNetworkError();
+                } else {
+                    if (manualRefreshEnabled) {
+                        refresh_error_label->show();
+                    }
+                }
+                qDebug() << "[Error] Element "+this->objectName()+" +returned network error";
             } else {
+                this->contentAcquired = true;
+                content->setText("<html></html>");
                 qresult = qresult.replace("%APP_DIR%", QCoreApplication::applicationDirPath());
                 content->setText(qresult);
                 //qDebug() << "[Update] Element "+this->objectName()+" : "+result;

@@ -31,9 +31,11 @@ private:
     QPushButton *refresh;
     QLabel *loader;
     QLabel *corner;
+    QLabel *refresh_error_label;
     bool canBeUpdated;
     bool manualRefreshEnabled;
     bool loaderEnabled;
+    bool contentAcquired = false;
 
 public slots:
     void update();
