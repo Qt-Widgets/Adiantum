@@ -22,3 +22,13 @@ std::string External::read_file(std::string path) {
     file.close();
     return data.toStdString();
 }
+
+std::string External::execute_process(std::string path) {
+    QProcess *process = new QProcess;
+    QEventLoop loop;
+    connect(process, SIGNAL(finished(int , QProcess::ExitStatus)), &loop, SLOT(quit()));
+    process->start(QString::fromStdString(path));
+    loop.exec();
+    return QString::fromLocal8Bit(process->readAllStandardOutput()).toStdString();
+}
+

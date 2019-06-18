@@ -27,6 +27,7 @@ Element::Element(QWidget *parent, QString name, QPoint position) {
     state.set_function("ext_network_request", External::network_request);
     state.set_function("ext_get_network_interfaces", External::get_network_interfaces);
     state.set_function("ext_read_file", External::read_file);
+    state.set_function("ext_execute_process", External::execute_process);
 
     /* open Lua script with same name as this instance */
     try {
