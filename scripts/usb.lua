@@ -3,6 +3,8 @@ config = {
 	modules = {"string", "util", "math", "table", "json"},
 	w=192,
 	h=64,
+	loader_enabled=false,
+	manual_refresh_enabled=false,
 	update_interval=10000
 }
 

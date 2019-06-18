@@ -3,6 +3,7 @@ config = {
 	modules = {"string", "json"},
 	w=256,
 	h=64,
+	loader_enabled=false,
 	update_interval=5000
 }
 
