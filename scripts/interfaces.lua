@@ -25,6 +25,7 @@ function onUpdate()
 	end
 	if interfaces_count == 0 then
 		result = result .. [[<tr><td align='left' width='48px' class='icon'><img src='%APP_DIR%/res/images/interfaces/none.png'></td><td colspan="4" class='first'><span class='name'>No active interfaces</span><br><span class='addr'>-/-</span></td></tr>]]
+		config["h"] = 64;
 	else
 		config["h"] = 64 + (32 * (interfaces_count - 1));
 	end
