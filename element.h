@@ -2,6 +2,7 @@
 #define ELEMENT_H
 
 #include <QtWidgets>
+#include <QtCharts>
 
 #include <sol.hpp>
 
@@ -17,6 +18,9 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void createChart();
+    void updateChart();
+    void updateChartSeries(QLineSeries *series);
     QLabel *content;
     sol::state state;
     sol::protected_function safe_onleftclick;
@@ -33,6 +37,7 @@ private:
     QLabel *loader;
     QLabel *corner;
     QLabel *refresh_error_label;
+    QChartView *chartView = nullptr;
     bool canBeUpdated;
     bool manualRefreshEnabled;
     bool loaderEnabled;

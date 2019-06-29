@@ -149,6 +149,11 @@ Element::Element(QWidget *parent, QString name, QPoint position) {
         }
     }
 
+    auto a_chartEnabled = state["config"]["chart_enabled"];
+    if ((a_chartEnabled.valid()) ? a_chartEnabled.get<bool>() : false) {
+        this->createChart();
+    }
+
     this->show();
 }
 
@@ -166,6 +171,11 @@ void Element::update() {
         std::string result = auto_result;
         if(auto_result.valid()) {
             QString qresult = QString::fromStdString(result);
+
+            if (chartView != nullptr) {
+                this->updateChart();
+            }
+
             if (qresult == "NETWORK_ERROR_FLAG") {
                 if (!this->contentAcquired) {
                     this->renderNetworkError();
@@ -207,6 +217,84 @@ void Element::update() {
             refresh->show();
         }
     }
+}
+
+void Element::createChart() {
+    QChart *chart = new QChart();
+    QLineSeries *series0 = new QLineSeries();
+    *series0 << QPointF(0, 0);
+    chart->addSeries(new QAreaSeries(series0));
+    chart->createDefaultAxes();
+    chart->setBackgroundVisible(false);
+    chart->setPlotAreaBackgroundVisible(false);
+    chart->legend()->hide();
+    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    chart->setMargins({0, 0, 0, 0});
+    chart->setBackgroundRoundness(0);
+    chart->setAttribute(Qt::WA_NoSystemBackground);
+    chart->setPlotArea(QRect(0, 0, this->width(), this->height()));
+
+    QAbstractAxis *axisx = chart->axes(Qt::Horizontal).takeAt(0);
+    QAbstractAxis *axisy = chart->axes(Qt::Vertical).takeAt(0);
+    axisx->setGridLinePen(QPen(QColor(255,255,255,64)));
+    axisy->setGridLinePen(QPen(QColor(255,255,255,64)));
+    axisx->setLinePen(QPen(QColor(255,255,255,64)));
+    axisy->setLinePen(QPen(QColor(255,255,255,64)));
+    axisy->setShadesVisible(false);
+    axisy->setLabelsVisible(false);
+    axisy->setGridLineVisible(false);
+    axisx->setLabelsVisible(false);
+    axisx->setGridLineVisible(false);  //true
+    axisx->setMinorGridLineVisible(false);  //true
+
+    chartView = new QChartView(chart);
+    chartView->setParent(this);
+    chartView->move(QPoint(0, 0));
+    chartView->setFixedSize(QSize(this->width(), this->height()));
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setAttribute(Qt::WA_NoSystemBackground);
+    chartView->setAttribute(Qt::WA_TransparentForMouseEvents);
+    chartView->setStyleSheet("background-color: rgba(0,0,0,0)");
+    chartView->show();
+}
+
+void Element::updateChart() {
+    sol::optional<sol::table> series_string = state["config"]["chart_series"];
+    if (series_string->size() > 0) {
+        QLineSeries *seriesx = new QLineSeries();
+        for (const auto& key_value_pair : *series_string ) {
+             //sol::object key = key_value_pair.first;
+             sol::table value = key_value_pair.second;
+             seriesx->append(value[1].get<qreal>(), value[2].get<qreal>());
+        }
+        this->updateChartSeries(seriesx);
+    }
+}
+
+void Element::updateChartSeries(QLineSeries *series) {
+    qreal xmax = 0, xmin = 0, ymax = 0, ymin = 0;
+    for (int i=0; i<series->count(); i++) {
+        qreal x = series->at(i).x();
+        qreal y = series->at(i).y();
+        if(y < ymin || y > ymax){
+            if(y < ymin) ymin = y;
+            if(y > ymax) ymax = y;
+        }
+        if(x < xmin || x > xmax){
+            if(x < xmin) xmin = x;
+            if(x > xmax) xmax = x;
+        }
+    }
+    chartView->chart()->axes(Qt::Horizontal).takeAt(0)->setRange(xmin, xmax);
+    chartView->chart()->axes(Qt::Vertical).takeAt(0)->setRange(ymin, ymax);
+
+    QAreaSeries *aseries = new QAreaSeries(series);
+    QPen pen(0x059605);
+    pen.setWidth(1);
+    aseries->setPen(pen);
+    aseries->setBrush(QBrush(QColor(5, 155, 5, 128)));
+    chartView->chart()->removeAllSeries();
+    chartView->chart()->addSeries(aseries);
 }
 
 void Element::refreshButtonClick() {

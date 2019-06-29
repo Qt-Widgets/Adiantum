@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network charts
 CONFIG   += c++14
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
